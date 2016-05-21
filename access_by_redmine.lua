@@ -29,11 +29,11 @@ if not db then
 end
 db:set_timeout(1000) -- 1 sec
 local ok, err, errno, sqlstate = db:connect{
-    host = "192.168.10.1",
-    port = 3306,
-    database = "exam",
-    user = "redmine",
-    password = "1!redmine",
+    host = ngx.var.auth_mysql_host,
+    port = ngx.var.auth_mysql_port,
+    database = ngx.var.auth_mysql_database,
+    user = ngx.var.auth_mysql_user,
+    password = ngx.var.auth_mysql_password,
     max_packet_size = 1024 * 1024,
     }
 if not ok then
