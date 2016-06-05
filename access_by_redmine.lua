@@ -42,7 +42,7 @@ end
 db:query("SET NAMES utf8")
 
 -- Verify user
-local res, err, errno, sqlstate = db:query("select id,login,admin from users where login='"..username.."' and hashed_password=sha1('"..password.."') and type='User'")
+local res, err, errno, sqlstate = db:query("select id,login,admin from users where login='"..username.."' and hashed_password=sha1('"..password.."') and type='User' and status=1")
 if not res then
     ngx.exit(ngx.HTTP_FORBIDDEN)
 elseif #res ~= 1 then
@@ -68,7 +68,7 @@ if allow_users then
 end
 
 -- Verify group
-local res, err, errno, sqlstate = db:query("select users.lastname as `group` from users left join groups_users on users.id = groups_users.group_id where groups_users.user_id = "..res['id'].." and users.type='Group'")
+local res, err, errno, sqlstate = db:query("select users.lastname as `group` from users left join groups_users on users.id = groups_users.group_id where groups_users.user_id = "..res['id'].." and users.type='Group' and status=1")
 if not res then
     ngx.exit(ngx.HTTP_FORBIDDEN)
 elseif (#res <= 0) then
