@@ -42,7 +42,7 @@ end
 db:query("SET NAMES utf8")
 
 -- Verify user
-local res, err, errno, sqlstate = db:query("select id,login,admin from users where login='"..username.."' and hashed_password=sha1('"..password.."') and type='User' and status=1")
+local res, err, errno, sqlstate = db:query("select id,login,admin from users where login='"..username.."' and hashed_password=sha1(concat(salt, sha1('"..password.."'))) and type='User' and status=1") 
 if not res then
     ngx.exit(ngx.HTTP_FORBIDDEN)
 elseif #res ~= 1 then
