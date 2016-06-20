@@ -44,9 +44,11 @@ db:query("SET NAMES utf8")
 -- Verify user
 local res, err, errno, sqlstate = db:query("select id,login,admin from users where login='"..username.."' and hashed_password=sha1(concat(salt, sha1('"..password.."'))) and type='User' and status=1") 
 if not res then
-    ngx.exit(ngx.HTTP_FORBIDDEN)
+    ngx.header.www_authenticate = [[Basic realm="Restricted"]]
+    ngx.exit(401)
 elseif #res ~= 1 then
-    ngx.exit(ngx.HTTP_FORBIDDEN)
+    ngx.header.www_authenticate = [[Basic realm="Restricted"]]
+    ngx.exit(401)
 else
     res=res[1]
 end
@@ -70,9 +72,11 @@ end
 -- Verify group
 local res, err, errno, sqlstate = db:query("select users.lastname as `group` from users left join groups_users on users.id = groups_users.group_id where groups_users.user_id = "..res['id'].." and users.type='Group' and status=1")
 if not res then
-    ngx.exit(ngx.HTTP_FORBIDDEN)
+    ngx.header.www_authenticate = [[Basic realm="Restricted"]]
+    ngx.exit(401)
 elseif (#res <= 0) then
-    ngx.exit(ngx.HTTP_FORBIDDEN)
+    ngx.header.www_authenticate = [[Basic realm="Restricted"]]
+    ngx.exit(401)
 end
 
 if allow_groups then
@@ -89,4 +93,5 @@ if allow_groups then
     end
 end
 
-ngx.exit(ngx.HTTP_FORBIDDEN)
+ngx.header.www_authenticate = [[Basic realm="Restricted"]]
+ngx.exit(401)
